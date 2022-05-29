@@ -5,6 +5,7 @@
 
 // Inicio del programa
 #include <iostream>
+#include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
 #include <cstdlib>
@@ -55,17 +56,29 @@ float calcularPrecio(int cantidad, float precio)
 }
 
 // buscar producto en el inventario
-int buscarProducto(string codigoProducto, string path)
+int buscarProducto(string codigoProducto, string path, int opt)
 {
+    system("cmd /c cls");
     int posicion = -1;
     ifstream in_file; // Input File Stream  para leer (reading)
     in_file.open(path);
     string linea;
     while (getline(in_file, linea))
     {
+
         vector<string> producto = split(linea, ',');
         if (producto[0] == codigoProducto)
         {
+
+            if(opt == 1){
+                cout << "Ingresar producto al inventario" << endl << endl;
+            }
+             if(opt == 2){
+                cout << "Extraer producto del inventario" << endl << endl;
+            }
+
+            cout << "Producto encontrado" << endl << endl;
+
             cout << "Codigo"
                  << ","
                  << "Nombre"
@@ -139,6 +152,10 @@ int updateFile(string codigo, int cantidad, string path)
         vector<string> producto = split(lines[i], ',');
         if (producto[0] == codigo)
         {
+            system("cmd /c cls");
+    cout <<"Agrregar producto al inventario"<<endl<<endl;
+            cout << "Producto actualizado" << endl << endl;
+
             cout << "Codigo"
                  << ","
                  << "Nombre"
@@ -191,7 +208,10 @@ int updateFileRemove(string codigo, int cantidad, string path)
 
             if (cantidadNueva < 0)
             {
-                cout << "No hay suficiente cantidad" << endl;
+                system("cmd /c cls");
+                
+                cout << "Extraer producto del inventario" << endl << endl;
+                cout << "No hay suficiente cantidad" << endl << endl;
                 return 0;
             }
             else
@@ -217,6 +237,10 @@ int updateFileRemove(string codigo, int cantidad, string path)
         vector<string> producto = split(lines[i], ',');
         if (producto[0] == codigo)
         {
+            system("cmd /c cls");
+            cout <<"Extraer producto del inventario"<<endl<<endl;
+            cout << "Producto actualizado" << endl << endl;
+
             cout << "Codigo"
                  << ","
                  << "Nombre"
@@ -251,6 +275,9 @@ int leerArchivo(string path)
     ifstream in_file; // Input File Stream  para leer (reading)
     string line;
     in_file.open(path);
+
+cout << "Mostar productos del inventario" << endl << endl;
+
     cout << "Codigo"
          << ","
          << "Nombre"
@@ -281,7 +308,7 @@ int leerArchivo(string path)
 
         // cout << line << endl;
     }
-    cout << "Gran Total: " << grandTotal << endl;
+    cout << "Gran Total: " << grandTotal << endl << endl;
 
     in_file.close();
     return 1;
@@ -334,26 +361,25 @@ int main()
     do
     {
         // Menu de opciones
-        cout << "Menu principal de productos" << endl;
-        cout << "1. Registrar producto ene el inventario" << endl;
+        cout << "Menu principal de productos" << endl << endl;
+        cout << "1. Registrar producto en el inventario" << endl;
         cout << "2. Mostar productos del inventario" << endl;
-        cout << "3. Ingresar producto al inetario" << endl;
-        cout << "4.Extraer producto del inventario" << endl;
-        cout << "5. Salir" << endl;
-        cout << "Ingrese una opcion: ";
+        cout << "3. Ingresar producto al inventario" << endl;
+        cout << "4. Extraer producto del inventario" << endl;
+        cout << "5. Salir" << endl << endl;
+        cout << "Ingrese una opcion: " << endl;
         cin >> opcion;
 
         switch (opcion)
         {
         case 1:
             // Registrar productos hasta que el usuario decida salir
-
-            system("cls");
-            cout << "Registrar productos" << endl
-                 << endl;
-
+            system("cmd /c cls");
             do
             {
+                 cout << "Registrar productos" << endl
+                 << endl;
+
                 cout << "Ingrese el codigo del producto: ";
                 cin >> producto.codigoProducto;
                 cout << "Ingrese el nombre del producto: ";
@@ -366,54 +392,61 @@ int main()
                 // Escribir producto en el archivo con funcion escribirEnArchivo
                 escribirEnArchivo(producto.codigoProducto + "," + producto.nombreProducto + "," + producto.cantidadExistente + "," + producto.precioUntario, pathFile);
 
-                system("cls");
+                system("cmd /c cls");
 
-                cout << "Producto guardado exitosamente";
-                system("pause");
-                system("cls");
+                cout << "Registrar producto en el inventario" << endl
+                     << endl;
+                cout << "Producto guardado exitosamente" << endl << endl;
+               
 
                 cout << "Desea ingresar otro producto? " << endl;
                 cout << "1. Si" << endl;
                 cout << "2. No" << endl;
 
                 cin >> seguir;
-                system("cls");
+                system("cmd /c cls");
 
             } while (seguir != 2);
 
             break;
         case 2:
             // Mostar productos
-            system("cls");
+            system("cmd /c cls");
             // Si el archivo esta vacio mostrar mensaje “Lo siento!!! No hay productos”
 
             // leerArchivo
             if (countLines(pathFile) == 0)
             {
-                cout << "No hay productos registrados" << endl;
+cout << "Mostar productos del inventario" << endl << endl;
+                cout << "No hay productos registrados" << endl << endl;
             }
             else
             {
                 leerArchivo(pathFile);
             }
 
-            system("pause");
-            system("cls");
+            system("cmd /c pause");
+            system("cmd /c cls");
             break;
 
         case 3:
+            system("cmd /c cls");
             // Ingresar productos al inventario
             // Solicitar codigo del producto
             if (countLines(pathFile) == 0)
             {
-                cout << "No hay productos registrados" << endl;
+                cout << "Ingresar producto al inventario" << endl
+                     << endl;
+                cout << "No hay productos registrados" << endl << endl;
             }
             else
             {
+                cout << "Ingresar producto al inventario" << endl
+                     << endl;
                 cout << "Ingrese el codigo del producto: ";
                 cin >> codigoProducto;
                 // Buscar producto en el archivo
-                if (buscarProducto(codigoProducto, pathFile) == 1)
+                if (buscarProducto(codigoProducto, pathFile, 1) == 1)
                 {
                     // Si el producto existe solicitar cantidad a ingresar
                     cout << "Ingrese la cantidad a ingresar: ";
@@ -431,24 +464,32 @@ int main()
                 }
                 else
                 {
-                    cout << "Producto no encontrado" << endl;
+                    cout<<"Ingresar producto al inventario"<<endl<<endl;
+                    cout << "Producto no encontrado" << endl << endl;
                 }
             }
 
-            system("cls");
+             system("cmd /c pause");
+            system("cmd /c cls");
             break;
         case 4:
+            system("cmd /c cls");
+
             // Extraer productos
             if (countLines(pathFile) == 0)
             {
-                cout << "No hay productos registrados" << endl;
+                cout << "Extraer producto del inventario" << endl
+                     << endl;
+                cout << "No hay productos registrados" << endl << endl;
             }
             else
             {
+                cout << "Extraer producto del inventario" << endl
+                     << endl;
                 cout << "Ingrese el codigo del producto: ";
                 cin >> codigoProducto;
                 // Buscar producto en el archivo
-                if (buscarProducto(codigoProducto, pathFile) == 1)
+                if (buscarProducto(codigoProducto, pathFile, 2) == 1)
                 {
                     // Si el producto existe solicitar cantidad a ingresar
                     cout << "Ingrese la cantidad a extraer: ";
@@ -466,20 +507,23 @@ int main()
                 }
                 else
                 {
-                    cout << "Producto no encontrado" << endl;
+                    cout << "Extraer producto del inventario" << endl
+                         << endl;
+                    cout << "Producto no encontrado" << endl << endl;
                 }
             }
-            system("cls");
+            system("cmd /c pause");
+            system("cmd /c cls");
             break;
         case 5:
             // Salir
             // Salir del programa
-            system("cls");
+            system("cmd /c cls");
             break;
         default:
             // Opcion invalida
             // Mostrar mensaje de error
-            system("cls");
+            system("cmd /c cls");
             cout << "Opcion invalida" << endl;
             break;
         }
