@@ -182,6 +182,19 @@ int updateFile(string codigo, int cantidad, string path)
     return 1;
 }
 
+int existFile(string path){
+    ifstream in_file; // Input File Stream  para leer (reading)
+    in_file.open(path);
+    if(in_file.is_open()){
+        in_file.close();
+        return 1;
+    }
+    else{
+        in_file.close();
+        return 0;
+    }
+}
+
 // update file
 int updateFileRemove(string codigo, int cantidad, string path)
 {
@@ -342,20 +355,21 @@ int main()
 {
 
     // Declaracion de variables
+    string pathFile = "C:\\Users\\dsdev\\OneDrive\\Escritorio\\UMG\\Progra1\\parte2\\laboratorio\\archivo.txt";
     int opcion;
     int seguir = 0;
-
-    string pathFile = "C:\\Users\\dsdev\\OneDrive\\Escritorio\\UMG\\Progra1\\parte2\\laboratorio\\archivo.txt";
-    string codigoProducto;
     int cantidadNueva;
-
+    string codigoProducto;
     string cadena;
     Producto producto;
 
     ifstream fe(pathFile);
-    ofstream file;
+
+    if(existFile(pathFile)==0){
+        ofstream file;
     file.open(pathFile);
     file.close();
+    }
 
     // Menu de opciones
     do
