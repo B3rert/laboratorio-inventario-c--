@@ -43,8 +43,8 @@ int escribirEnArchivo(string texto, string path)
 
     // Escribir el archivo
     out_file.open(path, ios::app); // ios::app es lo paralello a "a" que significa append agregar al final del archivo
-    out_file << texto << endl;                                                                                         // agregamos al buffer del stream
-    out_file.close();                                                                                                  // flush el buffer y cerramos. flush el buffer basicamente hace write en el archivo.
+    out_file << texto << endl;     // agregamos al buffer del stream
+    out_file.close();              // flush el buffer y cerramos. flush el buffer basicamente hace write en el archivo.
     return 1;
 }
 
@@ -58,7 +58,10 @@ float calcularPrecio(int cantidad, float precio)
 // buscar producto en el inventario
 int buscarProducto(string codigoProducto, string path, int opt)
 {
+    if(opt != 3){
     system("cmd /c cls");
+
+    }
     int posicion = -1;
     ifstream in_file; // Input File Stream  para leer (reading)
     in_file.open(path);
@@ -70,39 +73,46 @@ int buscarProducto(string codigoProducto, string path, int opt)
         if (producto[0] == codigoProducto)
         {
 
-            if(opt == 1){
-                cout << "Ingresar producto al inventario" << endl << endl;
+            if (opt == 1)
+            {
+                cout << "Ingresar producto al inventario" << endl
+                     << endl;
             }
-             if(opt == 2){
-                cout << "Extraer producto del inventario" << endl << endl;
+            if (opt == 2)
+            {
+                cout << "Extraer producto del inventario" << endl
+                     << endl;
             }
+            if (opt != 3)
+            {
+                cout << "Producto encontrado" << endl
+                     << endl;
 
-            cout << "Producto encontrado" << endl << endl;
+                cout << "Codigo"
+                     << ","
+                     << "Nombre"
+                     << ","
+                     << "Cantidad"
+                     << ","
+                     << "Precio"
+                     << ","
+                     << "total"
+                     << endl;
+                cout << producto[0]
+                     << ","
+                     << producto[1]
+                     << ","
+                     << producto[2]
+                     << ","
+                     << producto[3]
+                     << ","
+                     << calcularPrecio(stoi(producto[2]), stof(producto[3]))
+                     << endl
+                     << endl;
 
-            cout << "Codigo"
-                 << ","
-                 << "Nombre"
-                 << ","
-                 << "Cantidad"
-                 << ","
-                 << "Precio"
-                 << ","
-                 << "total"
-                 << endl;
-            cout << producto[0]
-                 << ","
-                 << producto[1]
-                 << ","
-                 << producto[2]
-                 << ","
-                 << producto[3]
-                 << ","
-                 << calcularPrecio(stoi(producto[2]), stof(producto[3]))
-                 << endl
-                 << endl;
-
-            posicion = 1;
-            break;
+            }
+                posicion = 1;
+                break;
         }
     }
     in_file.close();
@@ -153,8 +163,10 @@ int updateFile(string codigo, int cantidad, string path)
         if (producto[0] == codigo)
         {
             system("cmd /c cls");
-    cout <<"Agrregar producto al inventario"<<endl<<endl;
-            cout << "Producto actualizado" << endl << endl;
+            cout << "Agrregar producto al inventario" << endl
+                 << endl;
+            cout << "Producto actualizado" << endl
+                 << endl;
 
             cout << "Codigo"
                  << ","
@@ -182,14 +194,17 @@ int updateFile(string codigo, int cantidad, string path)
     return 1;
 }
 
-int existFile(string path){
+int existFile(string path)
+{
     ifstream in_file; // Input File Stream  para leer (reading)
     in_file.open(path);
-    if(in_file.is_open()){
+    if (in_file.is_open())
+    {
         in_file.close();
         return 1;
     }
-    else{
+    else
+    {
         in_file.close();
         return 0;
     }
@@ -222,9 +237,11 @@ int updateFileRemove(string codigo, int cantidad, string path)
             if (cantidadNueva < 0)
             {
                 system("cmd /c cls");
-                
-                cout << "Extraer producto del inventario" << endl << endl;
-                cout << "No hay suficiente cantidad" << endl << endl;
+
+                cout << "Extraer producto del inventario" << endl
+                     << endl;
+                cout << "No hay suficiente cantidad" << endl
+                     << endl;
                 return 0;
             }
             else
@@ -242,7 +259,7 @@ int updateFileRemove(string codigo, int cantidad, string path)
     file.close();
     for (int i = 0; i < lines.size(); i++)
     {
-        escribirEnArchivo(lines[i],path);
+        escribirEnArchivo(lines[i], path);
     }
 
     for (int i = 0; i < lines.size(); i++)
@@ -251,8 +268,10 @@ int updateFileRemove(string codigo, int cantidad, string path)
         if (producto[0] == codigo)
         {
             system("cmd /c cls");
-            cout <<"Extraer producto del inventario"<<endl<<endl;
-            cout << "Producto actualizado" << endl << endl;
+            cout << "Extraer producto del inventario" << endl
+                 << endl;
+            cout << "Producto actualizado" << endl
+                 << endl;
 
             cout << "Codigo"
                  << ","
@@ -289,7 +308,8 @@ int leerArchivo(string path)
     string line;
     in_file.open(path);
 
-cout << "Mostar productos del inventario" << endl << endl;
+    cout << "Mostar productos del inventario" << endl
+         << endl;
 
     cout << "Codigo"
          << ","
@@ -321,7 +341,8 @@ cout << "Mostar productos del inventario" << endl << endl;
 
         // cout << line << endl;
     }
-    cout << "Gran Total: " << grandTotal << endl << endl;
+    cout << "Gran Total: " << grandTotal << endl
+         << endl;
 
     in_file.close();
     return 1;
@@ -365,22 +386,25 @@ int main()
 
     ifstream fe(pathFile);
 
-    if(existFile(pathFile)==0){
+    if (existFile(pathFile) == 0)
+    {
         ofstream file;
-    file.open(pathFile);
-    file.close();
+        file.open(pathFile);
+        file.close();
     }
 
     // Menu de opciones
     do
     {
         // Menu de opciones
-        cout << "Menu principal de productos" << endl << endl;
+        cout << "Menu principal de productos" << endl
+             << endl;
         cout << "1. Registrar producto en el inventario" << endl;
         cout << "2. Mostar productos del inventario" << endl;
         cout << "3. Ingresar producto al inventario" << endl;
         cout << "4. Extraer producto del inventario" << endl;
-        cout << "5. Salir" << endl << endl;
+        cout << "5. Salir" << endl
+             << endl;
         cout << "Ingrese una opcion: " << endl;
         cin >> opcion;
 
@@ -391,11 +415,19 @@ int main()
             system("cmd /c cls");
             do
             {
-                 cout << "Registrar productos" << endl
-                 << endl;
+                cout << "Registrar productos" << endl
+                     << endl;
 
                 cout << "Ingrese el codigo del producto: ";
                 cin >> producto.codigoProducto;
+                
+                while (buscarProducto(producto.codigoProducto, pathFile, 3) == 1)
+                {
+                    cout << "Codigo ya existe, ingrese otro codigo: ";
+                    cin >> producto.codigoProducto;
+                }
+                
+
                 cout << "Ingrese el nombre del producto: ";
                 cin >> producto.nombreProducto;
                 cout << "Ingrese el precio unitario del producto: ";
@@ -410,8 +442,8 @@ int main()
 
                 cout << "Registrar producto en el inventario" << endl
                      << endl;
-                cout << "Producto guardado exitosamente" << endl << endl;
-               
+                cout << "Producto guardado exitosamente" << endl
+                     << endl;
 
                 cout << "Desea ingresar otro producto? " << endl;
                 cout << "1. Si" << endl;
@@ -431,8 +463,10 @@ int main()
             // leerArchivo
             if (countLines(pathFile) == 0)
             {
-cout << "Mostar productos del inventario" << endl << endl;
-                cout << "No hay productos registrados" << endl << endl;
+                cout << "Mostar productos del inventario" << endl
+                     << endl;
+                cout << "No hay productos registrados" << endl
+                     << endl;
             }
             else
             {
@@ -451,7 +485,8 @@ cout << "Mostar productos del inventario" << endl << endl;
             {
                 cout << "Ingresar producto al inventario" << endl
                      << endl;
-                cout << "No hay productos registrados" << endl << endl;
+                cout << "No hay productos registrados" << endl
+                     << endl;
             }
             else
             {
@@ -465,7 +500,7 @@ cout << "Mostar productos del inventario" << endl << endl;
                     // Si el producto existe solicitar cantidad a ingresar
                     cout << "Ingrese la cantidad a ingresar: ";
 
-                     do
+                    do
                     {
                         cin >> cantidadNueva;
                         if (cantidadNueva < 0)
@@ -478,12 +513,14 @@ cout << "Mostar productos del inventario" << endl << endl;
                 }
                 else
                 {
-                    cout<<"Ingresar producto al inventario"<<endl<<endl;
-                    cout << "Producto no encontrado" << endl << endl;
+                    cout << "Ingresar producto al inventario" << endl
+                         << endl;
+                    cout << "Producto no encontrado" << endl
+                         << endl;
                 }
             }
 
-             system("cmd /c pause");
+            system("cmd /c pause");
             system("cmd /c cls");
             break;
         case 4:
@@ -494,7 +531,8 @@ cout << "Mostar productos del inventario" << endl << endl;
             {
                 cout << "Extraer producto del inventario" << endl
                      << endl;
-                cout << "No hay productos registrados" << endl << endl;
+                cout << "No hay productos registrados" << endl
+                     << endl;
             }
             else
             {
@@ -523,7 +561,8 @@ cout << "Mostar productos del inventario" << endl << endl;
                 {
                     cout << "Extraer producto del inventario" << endl
                          << endl;
-                    cout << "Producto no encontrado" << endl << endl;
+                    cout << "Producto no encontrado" << endl
+                         << endl;
                 }
             }
             system("cmd /c pause");
