@@ -58,9 +58,9 @@ float calcularPrecio(int cantidad, float precio)
 // buscar producto en el inventario
 int buscarProducto(string codigoProducto, string path, int opt)
 {
-    if(opt != 3){
-    system("cmd /c cls");
-
+    if (opt != 3)
+    {
+        system("cmd /c cls");
     }
     int posicion = -1;
     ifstream in_file; // Input File Stream  para leer (reading)
@@ -109,10 +109,9 @@ int buscarProducto(string codigoProducto, string path, int opt)
                      << calcularPrecio(stoi(producto[2]), stof(producto[3]))
                      << endl
                      << endl;
-
             }
-                posicion = 1;
-                break;
+            posicion = 1;
+            break;
         }
     }
     in_file.close();
@@ -362,6 +361,40 @@ int countLines(string path)
     in_file.close();
     return lines;
 }
+int vaciarInventario(string path)
+{
+    int opt;
+    cout << "Vaciar inventario" << endl
+         << endl;
+    // Preguntar si esta seguro
+    cout << "Se eliminarán todos los productos del inventario" << endl;
+    cout << "Esta accion no se puede deshacer." << endl;
+    cout << "¿Esta seguro?" << endl;
+    cout << "1. Sí" << endl;
+    cout << "2. No" << endl;
+
+    cin >> opt;
+    ofstream file;
+
+    switch (opt)
+    {
+    case 1:
+        file.open(path);
+        file.close();
+
+        break;
+    case 2:
+    cout << "Accion cancelada" << endl;
+        break;
+
+    default:
+        cout << "Opcion invalida" << endl;
+        break;
+
+    }
+
+    return 0;
+}
 
 // Nueva estrcutura Produto
 struct Producto
@@ -403,7 +436,9 @@ int main()
         cout << "2. Mostar productos del inventario" << endl;
         cout << "3. Ingresar producto al inventario" << endl;
         cout << "4. Extraer producto del inventario" << endl;
-        cout << "5. Salir" << endl
+        cout << "5. Facturacion" << endl;
+        cout << "6. Vaciar inventario" << endl;
+        cout << "7. Salir" << endl
              << endl;
         cout << "Ingrese una opcion: " << endl;
         cin >> opcion;
@@ -420,13 +455,12 @@ int main()
 
                 cout << "Ingrese el codigo del producto: ";
                 cin >> producto.codigoProducto;
-                
+
                 while (buscarProducto(producto.codigoProducto, pathFile, 3) == 1)
                 {
                     cout << "Codigo ya existe, ingrese otro codigo: ";
                     cin >> producto.codigoProducto;
                 }
-                
 
                 cout << "Ingrese el nombre del producto: ";
                 cin >> producto.nombreProducto;
@@ -569,9 +603,27 @@ int main()
             system("cmd /c cls");
             break;
         case 5:
-            // Salir
-            // Salir del programa
+            // Facturacion
+            break;
+        case 6:
+            // Vaciar inventario
             system("cmd /c cls");
+            if (countLines(pathFile) == 0)
+            {
+                cout << "Vaciar inventario" << endl
+                     << endl;
+                cout << "No hay productos registrados" << endl
+                     << endl;
+            }
+            else
+            {
+                vaciarInventario(pathFile);
+            }
+             system("cmd /c pause");
+            system("cmd /c cls");
+            break;
+        case 7:
+            // Salir
             break;
         default:
             // Opcion invalida
@@ -581,7 +633,7 @@ int main()
             break;
         }
 
-    } while (opcion != 5);
+    } while (opcion != 7);
 
     return 0;
 }
