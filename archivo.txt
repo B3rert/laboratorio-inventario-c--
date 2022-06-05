@@ -1,2 +1,0 @@
-1,Durazno,0,45
-2,manzana,45,45

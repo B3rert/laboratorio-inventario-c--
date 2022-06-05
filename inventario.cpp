@@ -55,6 +55,33 @@ float calcularPrecio(int cantidad, float precio)
     return precioTotal;
 }
 
+//retornar precio unitario de un producto buscando por codigo 
+float retornarPrecioUnitario(string codigo, string path)
+{
+    ifstream in_file;  // Input File Stream  para leer (reading)
+    string line;
+    string codigoProducto;
+    string precioProducto;
+    float precioUnitario;
+    in_file.open(path);
+    if (in_file.is_open())
+    {
+        while (getline(in_file, line))
+        {
+            vector<string> result = split(line, ',');
+            codigoProducto = result[0];
+            precioProducto = result[3];
+            if (codigoProducto == codigo)
+            {
+                precioUnitario = stof(precioProducto);
+                return precioUnitario;
+            }
+        }
+    }
+    return 0;
+}
+
+
 // buscar producto por codigo y retornar el nombre del producto
 string buscarNombreProducto(string codigo, string path)
 {
@@ -426,6 +453,15 @@ int vaciarInventario(string path)
     return 0;
 }
 
+//crear cun archivo
+int crearArchivo(string path)
+{
+    ofstream file;
+    file.open(path);
+    file.close();
+    return 1;
+}
+
 // Nueva estrcutura Produto
 struct Producto
 {
@@ -435,17 +471,22 @@ struct Producto
     string precioUntario;
 };
 
+
 int main()
 {
 
     // Declaracion de variables
-    string pathFile = "C:\\Users\\dsdev\\OneDrive\\Escritorio\\UMG\\Progra1\\parte2\\laboratorio\\archivo.txt";
+    string path = "C:\\Users\\dsdev\\OneDrive\\Escritorio\\UMG\\Progra1\\parte2\\laboratorio\\";
+    string pathFile = path + "inventario.txt";
+    string pathFactura = path + "detallefactura.txt";
+    string pathFacturaSerie;
     int productoExistente = 0;
     int productoExtraido = 0;
     int opcion;
     int seguir = 0;
     int cantidadNueva;
     int cantidadProducto;
+    float grandTotal = 0;
     string fecha;
     string numeroFactura;
     string nitCliente;
@@ -460,10 +501,10 @@ int main()
 
     if (existFile(pathFile) == 0)
     {
-        ofstream file;
-        file.open(pathFile);
-        file.close();
+       crearArchivo(pathFile);
     }
+
+    crearArchivo(pathFactura);
 
     // Menu de opciones
     do
@@ -658,16 +699,22 @@ int main()
 
                 cout << "Ingrese la fecha de la factura: ";
                 cin >> fecha;
+                escribirEnArchivo("Fecha: " + fecha, pathFactura);
                 cout << "Ingrese el numero de factura: ";
                 cin >> numeroFactura;
+                escribirEnArchivo("Numero de factura: " + numeroFactura, pathFactura);
                 cout << "Ingrese el nit del cliente: ";
                 cin >> nitCliente;
+                escribirEnArchivo("Nit del cliente: " + nitCliente, pathFactura);
                 cout << "Ingrese el nombre del cliente: ";
                 cin >> nombreCliente;
+                escribirEnArchivo("Nombre del cliente: " + nombreCliente, pathFactura);
                 cout << "Ingrese la direccion del cliente: ";
                 cin >> direccionCliente;
+                escribirEnArchivo("Direccion del cliente: " + direccionCliente, pathFactura);
                 cout << "Ingrese el nombre del vendedor: ";
                 cin >> nombreVendedor;
+                escribirEnArchivo("Nombre del vendedor: " + nombreVendedor, pathFactura);
 
                 do
                 {
@@ -703,6 +750,17 @@ int main()
                             } while (productoExtraido == 0);
 
                             // Aqui se removio del inventario la cantidad al producto ingresado
+
+                           // Código del producto en fileFactura
+                            escribirEnArchivo("Codigo del producto: "+ codigoProducto, pathFactura);
+                           // Cantidad vendida  en fileFactura
+                            escribirEnArchivo("Cantidad vendida.: "+ to_string(cantidadNueva), pathFactura);
+
+                            //Mostar el subtotal (cantidad * precio unitario) 
+                            cout << "Subtotal: " << cantidadNueva * retornarPrecioUnitario(codigoProducto, pathFile) << endl;
+                            grandTotal += cantidadNueva * retornarPrecioUnitario(codigoProducto, pathFile);
+                            // Mostrar el total
+                            cout << "Total: " << grandTotal << endl << endl;
                         }
                         else
                         {
