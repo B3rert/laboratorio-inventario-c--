@@ -55,6 +55,29 @@ float calcularPrecio(int cantidad, float precio)
     return precioTotal;
 }
 
+// buscar producto por codigo y retornar el nombre del producto
+string buscarNombreProducto(string codigo, string path)
+{
+    ifstream in_file; // Input File Stream  para leer (reading)
+    string line;
+    string nombreProducto;
+    in_file.open(path);
+    if (in_file.is_open())
+    {
+        while (getline(in_file, line))
+        {
+            vector<string> linea = split(line, ',');
+            if (linea[0] == codigo)
+            {
+                nombreProducto = linea[1];
+                break;
+            }
+        }
+    }
+    in_file.close();
+    return nombreProducto;
+}
+
 // buscar producto en el inventario
 int buscarProducto(string codigoProducto, string path, int opt)
 {
@@ -210,7 +233,7 @@ int existFile(string path)
 }
 
 // update file
-int updateFileRemove(string codigo, int cantidad, string path)
+int updateFileRemove(string codigo, int cantidad, string path, int opt)
 {
     // make a copy content file
     vector<string> lines;
@@ -235,16 +258,21 @@ int updateFileRemove(string codigo, int cantidad, string path)
 
             if (cantidadNueva < 0)
             {
-                system("cmd /c cls");
+                if (opt == 1)
+                {
+                    system("cmd /c cls");
 
-                cout << "Extraer producto del inventario" << endl
-                     << endl;
+                    cout << "Extraer producto del inventario" << endl
+                         << endl;
+                }
+
                 cout << "No hay suficiente cantidad" << endl
                      << endl;
                 return 0;
             }
             else
             {
+
                 string cantidadNuevaString = to_string(cantidadNueva);
                 lines[i] = codigo + "," + producto[1] + "," + cantidadNuevaString + "," + producto[3];
                 break;
@@ -266,33 +294,36 @@ int updateFileRemove(string codigo, int cantidad, string path)
         vector<string> producto = split(lines[i], ',');
         if (producto[0] == codigo)
         {
-            system("cmd /c cls");
-            cout << "Extraer producto del inventario" << endl
-                 << endl;
-            cout << "Producto actualizado" << endl
-                 << endl;
+            if (opt == 1)
+            {
+                system("cmd /c cls");
+                cout << "Extraer producto del inventario" << endl
+                     << endl;
+                cout << "Producto actualizado" << endl
+                     << endl;
 
-            cout << "Codigo"
-                 << ","
-                 << "Nombre"
-                 << ","
-                 << "Cantidad"
-                 << ","
-                 << "Precio"
-                 << ","
-                 << "total"
-                 << endl;
-            cout << producto[0]
-                 << ","
-                 << producto[1]
-                 << ","
-                 << producto[2]
-                 << ","
-                 << producto[3]
-                 << ","
-                 << calcularPrecio(stoi(producto[2]), stof(producto[3]))
-                 << endl
-                 << endl;
+                cout << "Codigo"
+                     << ","
+                     << "Nombre"
+                     << ","
+                     << "Cantidad"
+                     << ","
+                     << "Precio"
+                     << ","
+                     << "total"
+                     << endl;
+                cout << producto[0]
+                     << ","
+                     << producto[1]
+                     << ","
+                     << producto[2]
+                     << ","
+                     << producto[3]
+                     << ","
+                     << calcularPrecio(stoi(producto[2]), stof(producto[3]))
+                     << endl
+                     << endl;
+            }
         }
     }
     return 1;
@@ -384,13 +415,12 @@ int vaciarInventario(string path)
 
         break;
     case 2:
-    cout << "Accion cancelada" << endl;
+        cout << "Accion cancelada" << endl;
         break;
 
     default:
         cout << "Opcion invalida" << endl;
         break;
-
     }
 
     return 0;
@@ -410,9 +440,18 @@ int main()
 
     // Declaracion de variables
     string pathFile = "C:\\Users\\dsdev\\OneDrive\\Escritorio\\UMG\\Progra1\\parte2\\laboratorio\\archivo.txt";
+    int productoExistente = 0;
+    int productoExtraido = 0;
     int opcion;
     int seguir = 0;
     int cantidadNueva;
+    int cantidadProducto;
+    string fecha;
+    string numeroFactura;
+    string nitCliente;
+    string nombreCliente;
+    string direccionCliente;
+    string nombreVendedor;
     string codigoProducto;
     string cadena;
     Producto producto;
@@ -589,7 +628,7 @@ int main()
                         }
                     } while (cantidadNueva < 0);
 
-                    updateFileRemove(codigoProducto, cantidadNueva, pathFile);
+                    updateFileRemove(codigoProducto, cantidadNueva, pathFile, 1);
                 }
                 else
                 {
@@ -604,6 +643,84 @@ int main()
             break;
         case 5:
             // Facturacion
+            system("cmd /c cls");
+            if (countLines(pathFile) == 0)
+            {
+                cout << "Facturacion" << endl
+                     << endl;
+                cout << "No hay productos registrados" << endl
+                     << endl;
+            }
+            else
+            {
+                cout << "Facturacion" << endl
+                     << endl;
+
+                cout << "Ingrese la fecha de la factura: ";
+                cin >> fecha;
+                cout << "Ingrese el numero de factura: ";
+                cin >> numeroFactura;
+                cout << "Ingrese el nit del cliente: ";
+                cin >> nitCliente;
+                cout << "Ingrese el nombre del cliente: ";
+                cin >> nombreCliente;
+                cout << "Ingrese la direccion del cliente: ";
+                cin >> direccionCliente;
+                cout << "Ingrese el nombre del vendedor: ";
+                cin >> nombreVendedor;
+
+                do
+                {
+                    do
+                    {
+                        cout << endl
+                             << "Ingrese el codigo del producto: ";
+                        cin >> codigoProducto;
+                        productoExistente = buscarProducto(codigoProducto, pathFile, 3);
+                        if (productoExistente == 1)
+                        {
+                            cout << endl
+                                 << buscarNombreProducto(codigoProducto, pathFile);
+
+                            cout << endl
+                                 << endl;
+                            // ingrese la cantidad de producto a factura
+                            do
+                            {
+                                cout << "Ingrese la cantidad de producto a factura: ";
+
+                                do
+                                {
+                                    cin >> cantidadNueva;
+                                    if (cantidadNueva < 0)
+                                    {
+                                        cout << "La cantidad de producto no puede ser negativa" << endl;
+                                    }
+                                } while (cantidadNueva < 0);
+
+                                productoExtraido = updateFileRemove(codigoProducto, cantidadNueva, pathFile, 2);
+
+                            } while (productoExtraido == 0);
+
+                            // Aqui se removio del inventario la cantidad al producto ingresado
+                        }
+                        else
+                        {
+                            cout << "Producto no encontrado" << endl;
+                        }
+                    } while (productoExistente != 1);
+
+                    cout << "Desea ingresar otro producto? " << endl;
+                    cout << "1. Si" << endl;
+                    cout << "2. No" << endl;
+
+                    cin >> seguir;
+                } while (seguir != 2);
+            }
+
+            system("cmd /c pause");
+            system("cmd /c cls");
+
             break;
         case 6:
             // Vaciar inventario
@@ -619,7 +736,7 @@ int main()
             {
                 vaciarInventario(pathFile);
             }
-             system("cmd /c pause");
+            system("cmd /c pause");
             system("cmd /c cls");
             break;
         case 7:
