@@ -55,10 +55,10 @@ float calcularPrecio(int cantidad, float precio)
     return precioTotal;
 }
 
-//retornar precio unitario de un producto buscando por codigo 
+// retornar precio unitario de un producto buscando por codigo
 float retornarPrecioUnitario(string codigo, string path)
 {
-    ifstream in_file;  // Input File Stream  para leer (reading)
+    ifstream in_file; // Input File Stream  para leer (reading)
     string line;
     string codigoProducto;
     string precioProducto;
@@ -80,7 +80,6 @@ float retornarPrecioUnitario(string codigo, string path)
     }
     return 0;
 }
-
 
 // buscar producto por codigo y retornar el nombre del producto
 string buscarNombreProducto(string codigo, string path)
@@ -405,6 +404,23 @@ int leerArchivo(string path)
     return 1;
 }
 
+// leer facturaSerie y mostrar todas las lineas del archivo
+int leerFacturaSerie(string path)
+{
+
+    ifstream in_file; // Input File Stream  para leer (reading)
+    string line;
+    in_file.open(path);
+
+    while (getline(in_file, line))
+    {
+        cout << line << endl;
+    }
+
+    in_file.close();
+    return 1;
+}
+
 // function count lines file
 int countLines(string path)
 {
@@ -453,12 +469,21 @@ int vaciarInventario(string path)
     return 0;
 }
 
-//crear cun archivo
+// crear cun archivo
 int crearArchivo(string path)
 {
     ofstream file;
     file.open(path);
     file.close();
+    return 1;
+}
+
+// Crear factura en archivo
+int crearFactura(string path)
+{
+    escribirEnArchivo("Variedades B3rert", path);
+    escribirEnArchivo("\n1 Avenida, 5-6 zona 4, Guatemala.", path);
+    escribirEnArchivo("\nNit 548997-k\n\n", path);
     return 1;
 }
 
@@ -470,7 +495,6 @@ struct Producto
     string cantidadExistente;
     string precioUntario;
 };
-
 
 int main()
 {
@@ -487,6 +511,8 @@ int main()
     int cantidadNueva;
     int cantidadProducto;
     float grandTotal = 0;
+    float cantidadPagar;
+    int factura = 0;
     string fecha;
     string numeroFactura;
     string nitCliente;
@@ -501,7 +527,7 @@ int main()
 
     if (existFile(pathFile) == 0)
     {
-       crearArchivo(pathFile);
+        crearArchivo(pathFile);
     }
 
     crearArchivo(pathFactura);
@@ -701,7 +727,22 @@ int main()
                 cin >> fecha;
                 escribirEnArchivo("Fecha: " + fecha, pathFactura);
                 cout << "Ingrese el numero de factura: ";
-                cin >> numeroFactura;
+                do
+                {
+                    cin >> numeroFactura;
+                    pathFacturaSerie = path + numeroFactura + ".txt";
+                    if (existFile(pathFacturaSerie) == 0)
+                    {
+                        crearArchivo(pathFacturaSerie);
+                        factura = 1;
+                    }
+                    else
+                    {
+                        cout << "El numero de factura ya existe" << endl;
+                        factura = 0;
+                    }
+                } while (factura == 0);
+
                 escribirEnArchivo("Numero de factura: " + numeroFactura, pathFactura);
                 cout << "Ingrese el nit del cliente: ";
                 cin >> nitCliente;
@@ -715,6 +756,17 @@ int main()
                 cout << "Ingrese el nombre del vendedor: ";
                 cin >> nombreVendedor;
                 escribirEnArchivo("Nombre del vendedor: " + nombreVendedor, pathFactura);
+
+                crearFactura(pathFacturaSerie);
+                escribirEnArchivo("FACTURA no. " + numeroFactura, pathFacturaSerie);
+                escribirEnArchivo("", pathFacturaSerie);
+                escribirEnArchivo("Fecha: " + fecha, pathFacturaSerie);
+                escribirEnArchivo("Nit del cliente: " + nitCliente, pathFacturaSerie);
+                escribirEnArchivo("Nombre del cliente: " + nombreCliente, pathFacturaSerie);
+                escribirEnArchivo("Direccion del cliente: " + direccionCliente, pathFacturaSerie);
+                escribirEnArchivo("Nombre del vendedor: " + nombreVendedor, pathFacturaSerie);
+                escribirEnArchivo("", pathFacturaSerie);
+                escribirEnArchivo("Cantidad, Descripcion, Precio unitario, Precio total", pathFacturaSerie);
 
                 do
                 {
@@ -751,16 +803,19 @@ int main()
 
                             // Aqui se removio del inventario la cantidad al producto ingresado
 
-                           // Código del producto en fileFactura
-                            escribirEnArchivo("Codigo del producto: "+ codigoProducto, pathFactura);
-                           // Cantidad vendida  en fileFactura
-                            escribirEnArchivo("Cantidad vendida.: "+ to_string(cantidadNueva), pathFactura);
+                            // Código del producto en fileFactura
+                            escribirEnArchivo("Codigo del producto: " + codigoProducto, pathFactura);
+                            // Cantidad vendida  en fileFactura
+                            escribirEnArchivo("Cantidad vendida.: " + to_string(cantidadNueva), pathFactura);
+                            // Escibir en facturaSerie cantidad, descripcion, precio unitario, precio total total
+                            escribirEnArchivo(to_string(cantidadNueva) + ", " + buscarNombreProducto(codigoProducto, pathFile) + ", " + to_string(retornarPrecioUnitario(codigoProducto, pathFile)) + ", " + to_string(cantidadNueva * retornarPrecioUnitario(codigoProducto, pathFile)), pathFacturaSerie);
 
-                            //Mostar el subtotal (cantidad * precio unitario) 
+                            // Mostar el subtotal (cantidad * precio unitario)
                             cout << "Subtotal: " << cantidadNueva * retornarPrecioUnitario(codigoProducto, pathFile) << endl;
                             grandTotal += cantidadNueva * retornarPrecioUnitario(codigoProducto, pathFile);
                             // Mostrar el total
-                            cout << "Total: " << grandTotal << endl << endl;
+                            cout << "Total: " << grandTotal << endl
+                                 << endl;
                         }
                         else
                         {
@@ -774,6 +829,20 @@ int main()
 
                     cin >> seguir;
                 } while (seguir != 2);
+                // garn total en factura serie
+                escribirEnArchivo("", pathFacturaSerie);
+                escribirEnArchivo("Total: " + to_string(grandTotal), pathFacturaSerie);
+
+                system("cmd /c cls");
+
+                leerFacturaSerie(pathFacturaSerie);
+                // solicitar cantidad con la que se paga y mostar cambio
+                cout << endl
+                     << endl
+                     << "Ingrese la cantidad con la que se paga: ";
+                cin >> cantidadPagar;
+                cout << "Cambio: " << cantidadPagar - grandTotal << endl;
+                cout << "Gracias por su compra" << endl;
             }
 
             system("cmd /c pause");
