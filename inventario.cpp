@@ -525,6 +525,7 @@ int main()
 
     ifstream fe(pathFile);
 
+    //crear archivo si no existe
     if (existFile(pathFile) == 0)
     {
         crearArchivo(pathFile);
